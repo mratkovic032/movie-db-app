@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <link rel="shortcut icon" href="images/logo.jpg">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>HCI - Singidunum</title>
+        <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="css/app.css" rel="stylesheet">
+    </head>
+    <body ng-app="myApp" ng-controller="MyCtrl as vm" >
+
+        <nav class="navbar navbar-inverse navbar-fixed-top example6">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar6">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand text-hide" href="index.html">
+                        <img src="images/logo.png" class="img-responsive" alt="logo" />
+                    </a>                    
+                </div>
+
+                <div id="navbar6" class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">Žanrovi <span class="caret"></span></a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li ng-repeat="el in vm.zanrovi"><a href="#" ng-click="vm.filter(el)">{{el.name}}</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">Prikaz <span class="caret"></span></a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="#" ng-click="vm.prikaz = 1">Jedna kolona</a></li>
+                                <li><a href="#" ng-click="vm.prikaz = 2">Dve kolone</a></li>
+                                <li><a href="#" ng-click="vm.prikaz = 3">Tri kolone</a></li>
+                                <li><a href="#" ng-click="vm.prikaz = 4">Cetiri kolone</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#" ng-click="vm.filter('all')">Svi</a></li>
+                        <li><a href="#" ng-click="vm.filter('omiljeni')">Omiljeni</a></li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">Top <span class="caret"></span></a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="#" ng-click="vm.filter('jakoDobar')">Jako dobri</a></li>
+                                <li><a href="#" ng-click="vm.filter('dobar')">Dobri</a></li>
+                                <li><a href="#" ng-click="vm.filter('los')">Losi</a></li>                                
+                            </ul>
+                        </li>
+                        <li ng-show="vm.showRegistracija"><a href="#" ng-click="vm.showRegisterModal()">Registruj se</a></li>
+                        <li ng-show="vm.showLogin"><a href="#" ng-click="vm.showLoginModal()">Login</a></li>                        
+                        <li class="dropdown" ng-show="vm.showKorisnickoIme">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">{{vm.ulogovanoIme}} <span class="caret"></span></a>
+                            <ul class="dropdown-menu" role="menu">                                
+                                <li><a href="#" ng-click="vm.showLoginModal()">Promeni korisnika</a></li>
+                                <li><a href="#" ng-click="vm.logout()">Logout</a></li>                                
+                                <li><a href="#" ng-click="vm.poruke()">Poruke</a></li>                                
+                            </ul>
+                        </li>
+                    </ul>
+
+                    <div class="col-sm-2 col-md-3 pull-right">
+                        <form class="navbar-form" role="search">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Pretraga" ng-model="vm.searchText">
+                                <div class="input-group-btn">
+                                    <button class="btn btn-default btn-search" type="submit" ng-click="vm.filter('pretrage')"><i class="glyphicon glyphicon-search"></i></button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>                                        
+                </div>
+                <!--/.nav-collapse -->
+            </div>
+            <!--/.container-fluid -->
+        </nav>
+
+        <div uib-alert class="alert-dismissable fade in" ng-repeat="alert in alerts" ng-class="'alert-' + (alert.type || 'warning')" dismiss-on-timeout="3000" close="closeAlert($index)">{{alert.msg}}</div>
+
+        <div class="container">            
+            <div>
+                <div ng-if="vm.showFilmove" ng-repeat="el in vm.filmovi.slice(((vm.currentPage - 1) * vm.itemsPerPage), (vm.currentPage * vm.itemsPerPage))" style="margin: 0 0 10px 0;" class="film-card" ng-class="{'col-md-12': vm.prikaz == 1, 'col-md-6': vm.prikaz == 2, 'col-md-4': vm.prikaz == 3, 'col-md-3': vm.prikaz == 4}">
+                    <img src="http://image.tmdb.org/t/p/w500/{{el.poster_path}}" style="width:100%;" alt="poster" /><br>
+
+                    <a style="color: red; text-decoration: none; cursor: pointer;" ng-click="vm.set_favorit(el)" uib-tooltip="Postavi u omiljene">
+                        <i class="glyphicon" ng-class="{'glyphicon-heart-empty':el.favorit != true, 'glyphicon-heart':el.favorit == true}" aria-hidden="true"></i>
+                    </a>
+                    <a ng-click="vm.prikaziShareModal(el)" style="cursor: pointer; text-decoration: none;" uib-tooltip="Share-uj film" >
+                        <i class="glyphicon glyphicon-share-alt" aria-hidden="true"></i>
+                    </a>
+
+                    <a href="http://www.imdb.com/title/{{el.imdb_id}}/">
+                        <strong> {{ el.title | limitTo: 20 }}{{el.title.length > 20 ? '...' : ''}}</strong>
+                    </a>
+                    <br />
+                    {{el.popularity}}
+                    <br />
+                    <span ng-if="el.director != undefined">{{el.director}}<br /></span>                                        
+                    <span ng-if="el.actors != undefined">{{el.actors}}<br /></span>                    
+                    <a href="#" ng-click="vm.filter(genre)" ng-repeat="genre in el.genres"><small>{{genre.name}} </small></a>
+                    <div ng-init="x = 0">
+                        <span uib-rating ng-model="x" max="5" state-on="'glyphicon-star'" state-off="'glyphicon-star-empty'"></span>
+                    </div>
+                    <button type="button" class="btn detaljnije-button" ng-click="vm.edit(el)">Edit</button>                                        
+                </div>
+            </div>
+
+            <!-- poruke -->            
+            <uib-accordion ng-if="vm.showPoruke">
+                <div style="width: 50%; margin: 6% auto 0 auto;" uib-accordion-group class="panel-default" heading="{{poruka.posiljalac}} ti je poslao/la poruku" ng-repeat="poruka in vm.porukeNiz">
+                    {{poruka.part1}}<a href="{{poruka.part2}}">{{poruka.part3}}</a>{{poruka.part4}}
+                </div>
+            </uib-accordion>
+        </div>
+
+        <div class="text-center" ng-if="vm.showPagination" style="clear: both;">
+            <ul uib-pagination direction-links="true"
+                previous-text="&lsaquo;" 
+                next-text="&rsaquo;"
+                total-items="vm.totalItems"
+                items-per-page="vm.itemsPerPage"
+                ng-model="vm.currentPage"
+                max-size="vm.maxSize"
+                class="pagination-sm"
+                boundary-links="true"                
+                style="margin: 20px 0 10px 0;">                    
+            </ul>                                                
+        </div> 
+
+        <!-- login modal -->
+        <script type="text/ng-template" id="loginModal.html">             
+            <div class="modal-header" style="text-align: center;">
+                <h3 class="modal-title">Login</h3>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">                        
+                        <input type="text" ng-model="$ctrl.loginIme" class="form-control" placeholder="Korisnicko ime">                        
+                        <input type="password" ng-model="$ctrl.loginLozinka" class="form-control" placeholder="Lozinka">                    
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-primary btn-block" ng-click="$ctrl.login()">Login</button>                                                              
+                    </div>
+                </form>
+            </div> 
+            <div class="modal-footer">                
+                <button class="btn btn-warning" ng-click="$ctrl.cancel()">Nazad</button>                   
+            </div>                    
+        </script>
+
+        <!-- register modal -->
+        <script type="text/ng-template" id="registerModal.html">
+            <div class="modal-header" style="text-align: center;">
+                <h3 class="modal-title">Registracija</h3>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">                        
+                        <input type="text" ng-model="$ctrl.signupIme" class="form-control" placeholder="Korisnicko ime">                        
+                        <input type="password" ng-model="$ctrl.signupLozinka" class="form-control" placeholder="Lozinka">                                            
+                        <input type="password" ng-model="$ctrl.ponovljenaLozinka" class="form-control" placeholder="Ponovljena lozinka">                    
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-primary btn-block" ng-click="$ctrl.registracija()">Registruj se</button>                   
+
+                    </div>
+                </form>
+            </div> 
+            <div class="modal-footer">
+                <button class="btn btn-warning" ng-click="$ctrl.cancel()">Nazad</button>                
+            </div>
+        </script>
+
+
+        <!-- edit modal -->
+        <script type="text/ng-template" id="editModal.html">                       
+            <div class="modal-header" style="text-align: center;">
+                <h3 class="modal-title">Edit Filma</h3>
+            </div>
+            <div class="modal-body">                
+                <input type="text" class="form-control" ng-model="$ctrl.novoImeFilma" />
+                <input type="text" class="form-control" ng-model="$ctrl.reditelj"  placeholder="Reditelj" />
+                <textarea class="form-control" rows="3" ng-model="$ctrl.glumci" placeholder="Glavni glumci..." />                                                                                
+                <input type="text" class="form-control" uib-datepicker-popup="{{$ctrl.formatDatuma}}" ng-model="$ctrl.datum" readonly />                
+                <label class="checkbox-inline" ng-repeat="el in $ctrl.zanrovi"><input type="checkbox" value="el" ng-click="$ctrl.noviZanrovi.push(el)">{{el.name}}</label>
+                <br /><br />
+                <label class="radio-inline"><input type="radio" name="ocena" value="los" ng-model="$ctrl.rate">Los</label>
+                <label class="radio-inline"><input type="radio" name="ocena" value="dobar" ng-model="$ctrl.rate">Dobar</label>
+                <label class="radio-inline"><input type="radio" name="ocena" value="jako dobar" ng-model="$ctrl.rate">Jako Dobar</label>
+                <button class="btn btn-primary btn-block" ng-click="$ctrl.save()">Sacuvaj</button>                    
+            </div> 
+            <div class="modal-footer">
+                <button class="btn btn-danger" ng-click="$ctrl.delete()" style="width: 49%; float: left;">Izbrisi</button>                    
+                <button class="btn btn-warning" ng-click="$ctrl.cancel()" style="width: 49%;">Nazad</button>                    
+            </div>            
+        </script>
+        
+        <!-- delete modal-->
+        <script type="text/ng-template" id="deleteModal.html">
+            <div class="modal-header" style="text-align: center">
+                <h3 class="modal-title">Izbrisi film</h3>
+            </div>            
+            <div class="modal-body text-center">
+                Da li ste <strong>sigurni</strong> da zelite da <strong>izbrisete film</strong>?<br /> 
+                Unesite ispravno ime filma kako biste potvrdili brisanje
+                <input type="text" class="form-control" ng-model="$ctrl2.proveraFilma" ng-change="$ctrl2.checkInput()" placeholder="Unesite ima filma" />                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" ng-disabled="$ctrl2.disabled" style="width: 49%; float: left" ng-click="$ctrl2.delete2()">Izbrisi film</button>
+                <button type="button" class="btn btn-warning" style="width: 49%;" ng-click="$ctrl2.cancel2()">Nazad</button>
+            </div>
+        </script>
+
+        <!-- share modal -->
+        <script type="text/ng-template" id="shareModal.html">            
+            <div class="modal-header">
+                <div class="input-group">
+                    <span class="input-group-addon">
+                        <i class="glyphicon glyphicon-search" style="color: #000;" aria-hidden="true"></i>
+                    </span>
+                    <input type="text" ng-model="$ctrl.searchKorisnike" class="form-control search-field" placeholder="Pretraga">
+                    <span class="input-group-addon" ng-click="$ctrl.cancel()" title="Close Modal" style="cursor: pointer;">&times;</span>
+                </div>
+            </div>
+
+            <div class="modal-body" style="height: 400px; overflow: auto;">
+                <table class="table table-hover table-responsive" ng-show="$ctrl.korisnici != null">
+                    <thead>
+                        <tr>
+                            <td><strong>Redni broj</strong></td>
+                            <td><strong>Korisnicko ime</strong></td>                   
+                            <td><strong>Share</strong></td>                   
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="el in $ctrl.korisnici| filter: $ctrl.searchKorisnike">
+                            <td>{{$index + 1}}</td>
+                            <td>{{el.ime}}</td>                                                                                             
+                            <td>
+                                <button class="btn btn-default btn-xs" ng-click="$ctrl.share(el)">
+                                    <span class="glyphicon glyphicon-share-alt" aria-hidden="true" style="color: #000;"></span>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>            
+        </script>
+        
+        <script src="bower_components/jquery/dist/jquery.min.js"></script>
+        <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>        
+        <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-animate.js"></script>
+        <script src="bower_components/angular-bootstrap/ui-bootstrap.min.js"></script>        
+        <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls-2.5.0.js" type="text/javascript"></script>
+        <script src="js/app.js"></script>
+
+    </body>
+</html>

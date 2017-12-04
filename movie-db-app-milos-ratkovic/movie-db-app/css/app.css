@@ -1,0 +1,92 @@
+body {
+    padding-top: 70px;
+}
+
+.navbar-brand {
+    padding: 0px;
+}
+.navbar-brand>img {
+    padding: 0;
+    margin: 0;
+    height: 100%;  
+}
+.navbar-form .input-group>.form-control {
+    color: white;
+    background-color: #555;
+    border: 1px solid #777;
+}
+.btn-search{
+    background-color: #555;
+    border: 1px solid #777;
+}
+.alert {
+    position: fixed;
+    top: 52px;
+    width: 100%;
+    z-index: 1000 !important;
+    text-align: center;
+}
+.example6 {
+    background: rgba(0,0,0,0.8);
+}
+div.modal-content {    
+    margin-top: 20%;
+    z-index: 2 !important;
+}
+@-webkit-keyframes animatezoom {
+    from {-webkit-transform: scale(0)}
+    to {-webkit-transform: scale(1)}
+}
+.animate {
+    -webkit-animation: animatezoom 0.6s;
+    animation: animatezoom 0.6s;
+}
+.film-card.ng-enter-stagger {
+    transition-delay: 0.15s;
+    transition-duration: 0s;
+}
+.film-card.ng-enter {
+    transition: all ease 0.4s;
+    opacity: 0;
+    transform: translateX(-100%);
+}
+.film-card.ng-enter.ng-enter-active {
+    opacity: 1;
+    transform: translateX(0);
+}
+/*.film-card.ng-leave {
+    transition: all ease 0.2s;
+    opacity: 1;
+    transform: translateX(0);
+}
+.film-card.ng-leave.ng-leave-active {
+    opacity: 0;
+    transform: translateX(+100%);
+}*/
+.detaljnije-button {
+    width: 100%;
+    background-color: transparent;
+    border: 1px solid #337ab7;
+    color: #337ab7;
+    transition: 0.4s;
+}
+.detaljnije-button:hover {
+    background-color: #337ab7;
+    color: #fff;
+}
+span[title='Close Modal'] {
+    color: #fff;
+    background-color: #f0ad4e;
+    border-color: #eea236;
+}
+span[title='Close Modal']:hover {
+    color: #fff;
+    background-color: #ec971f;
+    border-color: #d58512;
+}
+.modal-body .form-control {
+    margin-bottom: 10px;
+}
+.radio-inline {
+    margin-bottom: 10px;
+}
