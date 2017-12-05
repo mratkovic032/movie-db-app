@@ -110,9 +110,9 @@
                 </div>
             </div>
 
-            <!-- poruke -->            
+            <!-- messages modal -->            
             <uib-accordion ng-if="vm.showPoruke">
-                <div style="width: 50%; margin: 6% auto 0 auto;" uib-accordion-group class="panel-default" heading="{{poruka.posiljalac}} ti je poslao/la poruku" ng-repeat="poruka in vm.porukeNiz">
+                <div style="width: 60%; margin: auto;" uib-accordion-group class="panel-default" heading="{{poruka.posiljalac}} ti je poslao/la poruku" ng-repeat="poruka in vm.porukeNiz">
                     {{poruka.part1}}<a href="{{poruka.part2}}">{{poruka.part3}}</a>{{poruka.part4}}
                 </div>
             </uib-accordion>
@@ -208,7 +208,7 @@
             <div class="modal-body text-center">
                 Da li ste <strong>sigurni</strong> da zelite da <strong>izbrisete film</strong>?<br /> 
                 Unesite ispravno ime filma kako biste potvrdili brisanje
-                <input type="text" class="form-control" ng-model="$ctrl2.proveraFilma" ng-change="$ctrl2.checkInput()" placeholder="Unesite ima filma" />                
+                <input style="margin-top: 10px;" type="text" class="form-control" ng-model="$ctrl2.proveraFilma" ng-change="$ctrl2.checkInput()" placeholder="Unesite ima filma" />                
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" ng-disabled="$ctrl2.disabled" style="width: 49%; float: left" ng-click="$ctrl2.delete2()">Izbrisi film</button>
